@@ -1,0 +1,16 @@
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using ChatServer.Model;
+using ChatServer.Model.ViewModels;
+
+namespace ChatServer.Service.Contract
+{
+    public interface IHubService
+    {
+        Task<User> FindUserInChat(string appId, string chatId, string userId);
+        Task<UserChatVM> GetChatHistoryAndDoAppropriateActions(string appId, string chatId, string userId);
+        Task<ChatConversation> SendMessageToChat(string appId, string chatId, string userId, string message);
+        Task<User> MakeUserOnline(string appId, string userId, string connectionId, string access_token);
+    }
+}

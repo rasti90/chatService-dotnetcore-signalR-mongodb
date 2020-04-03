@@ -4,11 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using ChatServer.Model;
 
-namespace ChatServer.Model.ViewModels
-{
-    public class ChatMembersVM
-    {
+namespace ChatServer.Model.ViewModels {
+    public class ChatMembersVM {
         public string ChatId { get; set; }
-        public List<ChatMember> ChatMembers {get;set;}
+        public List<ChatMember> ChatMembers { get; set; }
     }
 }

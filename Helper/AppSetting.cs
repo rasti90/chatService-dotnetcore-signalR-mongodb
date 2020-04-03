@@ -1,12 +1,9 @@
-namespace ChatServer.Helper
-{
-    public class AppSettings : IAppSettings
-    {
+namespace ChatServer.Helper {
+    public class AppSettings : IAppSettings {
         public string secret { get; set; }
     }
 
-    public interface IAppSettings
-    {
+    public interface IAppSettings {
         string secret { get; set; }
     }
 }

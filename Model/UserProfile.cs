@@ -5,13 +5,10 @@ using System.Threading.Tasks;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-
-namespace ChatServer.Model
-{
-    public class UserProfile
-    {
+namespace ChatServer.Model {
+    public class UserProfile {
         [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
+        [BsonRepresentation (BsonType.ObjectId)]
         public string Id { get; set; }
         public string userName { get; set; }
         public string firstName { get; set; }
@@ -21,12 +18,13 @@ namespace ChatServer.Model
         public bool isActive { get; set; }
         public bool isOnline { get; set; }
         public List<Activity> activities { get; set; }
-         [BsonIgnore]
-        public string fullName{
-            get{
+
+        [BsonIgnore]
+        public string fullName {
+            get {
                 return this.firstName + " " + this.lastName;
             }
-            set{
+            set {
 
             }
         }

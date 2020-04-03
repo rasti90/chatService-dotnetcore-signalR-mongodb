@@ -48,7 +48,7 @@ namespace ChatServer {
             services.AddCors (options => {
                 options.AddPolicy (MyCustomAllowedOrigins,
                     builder => {
-                        builder.WithOrigins ("http://localhost:50911", "https://localhost:44346", "http://localhost:3000", "http://192.168.43.52:3000")
+                        builder.WithOrigins ("http://localhost:50911", "https://localhost:44346", "http://localhost:3000", "http://37.152.179.149:3000")
                             .AllowAnyHeader ()
                             .WithMethods ("GET", "POST")
                             .AllowCredentials ();

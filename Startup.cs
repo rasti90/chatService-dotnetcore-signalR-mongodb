@@ -20,6 +20,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.HttpOverrides;
 
 namespace ChatServer {
     public class Startup {
@@ -111,9 +112,9 @@ namespace ChatServer {
                 app.UseDeveloperExceptionPage ();
             }
 
-            // app.UseForwardedHeaders (new ForwardedHeadersOptions {
-            //     ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-            // });
+            app.UseForwardedHeaders (new ForwardedHeadersOptions {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            });
 
             app.UseDefaultFiles ();
             app.UseStaticFiles ();

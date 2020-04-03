@@ -13,11 +13,19 @@ namespace ChatServer {
             CreateHostBuilder (args).Build ().Run ();
         }
 
-        public static IHostBuilder CreateHostBuilder (string[] args) =>
-            Host.CreateDefaultBuilder (args)
+        public static IHostBuilder CreateHostBuilder (string[] args) {
+            // var host = new WebHostBuilder()
+            //     .UseKestrel()
+            //     .UseContentRoot(Directory.GetCurrentDirectory())
+            //     .UseUrls("http://localhost:5000", "httpS://localhost:5001")
+            //     .UseIISIntegration()
+            //     .UseStartup<Startup>();
+            return Host.CreateDefaultBuilder (args)
             .ConfigureWebHostDefaults (webBuilder => {
                 webBuilder.UseStartup<Startup> ();
                     //.UseUrls ("https://localhost:4000");
             });
+            //return host;
+        }
     }
 }

@@ -47,7 +47,7 @@ namespace ChatServer.Service {
         public async Task<Chat> CreateChat (string appId, string userId, ChatVM model) {
             var app = await _applicationRepository.GetAsync (appId);
             if (app != null) {
-                var user = await _userRepository.GetAsync (userId);
+                var user = await _userRepository.GetAsync (appId, userId);
                 model.AppId = app.Id;
                 model.UserId = user.Id;
                 var chat = await CreateChatRecord (model);
@@ -59,13 +59,13 @@ namespace ChatServer.Service {
         public async Task<Chat> GetChatInformation (string appId, string userId, string chatId) {
             var app = await _applicationRepository.GetAsync (appId);
             if (app != null) {
-                var user = await _userRepository.GetAsync (userId);
+                var user = await _userRepository.GetAsync (appId, userId);
                 var chat = await _chatRepository.GetAsync (app.Id, chatId);
                 if (user != null && chat != null) {
                     if (chat.ChatMembers.Any (member => member.UserId == user.Id)) {
                         if (chat.ChatType == ChatType.Private) {
                             var otherUser = chat.ChatMembers.Find (chatMember => chatMember.UserId != userId);
-                            var otherUserInfo = await _userRepository.GetAsync (otherUser.UserId);
+                            var otherUserInfo = await _userRepository.GetAsync (appId, otherUser.UserId);
                             chat.Name = otherUserInfo.FullName;
                         }
                         return chat;

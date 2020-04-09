@@ -99,19 +99,19 @@ namespace ChatServer.Hub {
             }
         }
 
-        public override async Task OnDisconnectedAsync (Exception exception) {
-            // var httpContext = Context.GetHttpContext();
-            // var userExternalId = httpContext.Request.Query["userExternalId"].ToString();
-            // var APIKey = httpContext.Request.Query["APIKey"].ToString();
-            // var app = await _applicationService.GetByAPIKeyAsync(APIKey);
-            // var user = await _userService.GetByExternalIdAsync(userExternalId);
-            // if (user != null && app != null)
-            // {
-            //     var connection = user.connections.FirstOrDefault(conn => conn.connectionId == Context.ConnectionId);
-            //     var activity = new Activity() { appId = app.Id, activityType = Models.Enums.ActivityType.getOffline, connectionId = Context.ConnectionId, date = DateTime.Now };
-            //     await _userService.AddActivityAndManageConnectionToUserAsync(user.Id, activity, connection);
-            // }
+        // public override async Task OnDisconnectedAsync (Exception exception) {
+        //     // var httpContext = Context.GetHttpContext();
+        //     // var userExternalId = httpContext.Request.Query["userExternalId"].ToString();
+        //     // var APIKey = httpContext.Request.Query["APIKey"].ToString();
+        //     // var app = await _applicationService.GetByAPIKeyAsync(APIKey);
+        //     // var user = await _userService.GetByExternalIdAsync(userExternalId);
+        //     // if (user != null && app != null)
+        //     // {
+        //     //     var connection = user.connections.FirstOrDefault(conn => conn.connectionId == Context.ConnectionId);
+        //     //     var activity = new Activity() { appId = app.Id, activityType = Models.Enums.ActivityType.getOffline, connectionId = Context.ConnectionId, date = DateTime.Now };
+        //     //     await _userService.AddActivityAndManageConnectionToUserAsync(user.Id, activity, connection);
+        //     // }
 
-        }
+        // }
     }
 }

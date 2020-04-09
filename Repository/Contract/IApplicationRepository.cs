@@ -20,6 +20,5 @@ namespace ChatServer.Repository.Contract {
         Task RemoveAsync (Application applicationIn);
         void Remove (string id);
         Task RemoveAsync (string id);
-        string generateJWTToken (string userExternalId);
     }
 }

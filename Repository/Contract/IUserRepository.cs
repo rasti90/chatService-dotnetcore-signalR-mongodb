@@ -7,8 +7,8 @@ namespace ChatServer.Repository.Contract {
     public interface IUserRepository {
         List<User> GetByAppId (string appId);
         Task<List<User>> GetByAppIdAsync (string appId);
-        User Get (string id);
-        Task<User> GetAsync (string id);
+        User Get (string appId, string userId);
+        Task<User> GetAsync (string appId, string userId);
         User GetByExternalId (string appId, string externalId);
         Task<User> GetByExternalIdAsync (string appId, string externalId);
         User GetByConnectionId (string connectionId);

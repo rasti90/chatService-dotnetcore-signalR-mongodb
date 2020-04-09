@@ -21,6 +21,11 @@ namespace ChatServer {
             //     .UseIISIntegration()
             //     .UseStartup<Startup>();
             return Host.CreateDefaultBuilder (args)
+            .ConfigureLogging(logging =>
+            {
+                logging.ClearProviders();
+                logging.AddConsole();
+            })
             .ConfigureWebHostDefaults (webBuilder => {
                 webBuilder.UseStartup<Startup> ();
                     //.UseUrls ("https://localhost:4000");

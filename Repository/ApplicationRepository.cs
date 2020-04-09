@@ -7,82 +7,144 @@ using System.Threading.Tasks;
 using ChatServer.Helper;
 using ChatServer.Model;
 using ChatServer.Repository.Contract;
+using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 
 namespace ChatServer.Repository {
     public class ApplicationRepository : IApplicationRepository {
         private readonly IMongoCollection<Application> _applications;
+        private readonly ILogger _logger;
         private readonly IAppSettings _appSettings;
-        public ApplicationRepository (IDatabaseSettings settings, IAppSettings appSettings) {
+        public ApplicationRepository (IDatabaseSettings settings, IAppSettings appSettings, ILogger<ApplicationRepository> logger) {
             this._appSettings = appSettings;
+            this._logger = logger;
             var client = new MongoClient (settings.ConnectionString);
             var database = client.GetDatabase (settings.DatabaseName);
 
             _applications = database.GetCollection<Application> (settings.ApplicationsCollectionName);
         }
 
-        public List<Application> Get () =>
-            _applications.Find (application => true).ToList ();
+        public List<Application> Get () {
+            try {
+                return _applications.Find (application => true).ToList ();
+            } catch (Exception ex) {
+                _logger.LogError (ex, "Get Application ApplicationRepository Exception");
+                return null;
+            }
+        }
 
-        public async Task<List<Application>> GetAsync () =>
-            await _applications.Find (application => true).ToListAsync ();
+        public async Task<List<Application>> GetAsync () {
+            try {
+                return await _applications.Find (application => true).ToListAsync ();
+            } catch (Exception ex) {
+                _logger.LogError (ex, "Get Applications ApplicationRepository Exception");
+                return null;
+            }
+        }
 
-        public Application Get (string id) =>
-            _applications.Find<Application> (application => application.Id == id).FirstOrDefault ();
+        public Application Get (string id) {
+            try {
+                return _applications.Find<Application> (application => application.Id == id).FirstOrDefault ();
+            } catch (Exception ex) {
+                _logger.LogError (ex, "Get Application ApplicationRepository Exception");
+                return null;
+            }
+        }
 
-        public async Task<Application> GetAsync (string id) =>
-            await _applications.Find<Application> (application => application.Id == id).FirstOrDefaultAsync ();
+        public async Task<Application> GetAsync (string id) {
+            try {
+                return await _applications.Find<Application> (application => application.Id == id).FirstOrDefaultAsync ();
+            } catch (Exception ex) {
+                _logger.LogError (ex, "Get Application ApplicationRepository Exception");
+                return null;
+            }
+        }
 
-        public Application GetByAPIKey (string APIKey) =>
-            _applications.Find<Application> (application => application.APIKey == APIKey).FirstOrDefault ();
+        public Application GetByAPIKey (string APIKey) {
+            try {
+                return _applications.Find<Application> (application => application.APIKey == APIKey).FirstOrDefault ();
+            } catch (Exception ex) {
+                _logger.LogError (ex, "GetByAPIKey ApplicationRepository Exception");
+                return null;
+            }
+        }
 
-        public async Task<Application> GetByAPIKeyAsync (string APIKey) =>
-            await _applications.Find<Application> (application => application.APIKey == APIKey).FirstOrDefaultAsync ();
+        public async Task<Application> GetByAPIKeyAsync (string APIKey) {
+            try {
+                return await _applications.Find<Application> (application => application.APIKey == APIKey).FirstOrDefaultAsync ();
+            } catch (Exception ex) {
+                _logger.LogError (ex, "GetByAPIKey ApplicationRepository Exception");
+                return null;
+            }
+        }
 
         public Application Create (Application application) {
-            _applications.InsertOne (application);
-            return application;
+            try {
+                _applications.InsertOne (application);
+                return application;
+            } catch (Exception ex) {
+                _logger.LogError (ex, "Create ApplicationRepository Exception");
+                return null;
+            }
         }
 
         public async Task<Application> CreateAsync (Application application) {
-            await _applications.InsertOneAsync (application);
-            return application;
+            try {
+                await _applications.InsertOneAsync (application);
+                return application;
+            } catch (Exception ex) {
+                _logger.LogError (ex, "Create ApplicationRepository Exception");
+                return null;
+            }
         }
 
-        public void Update (string id, Application applicationIn) =>
-            _applications.ReplaceOne (application => application.Id == id, applicationIn);
-
-        public async Task UpdateAsync (string id, Application applicationIn) =>
-            await _applications.ReplaceOneAsync (application => application.Id == id, applicationIn);
-
-        public void Remove (Application applicationIn) =>
-            _applications.DeleteOne (application => application.Id == applicationIn.Id);
-
-        public async Task RemoveAsync (Application applicationIn) =>
-            await _applications.DeleteOneAsync (application => application.Id == applicationIn.Id);
-
-        public void Remove (string id) =>
-            _applications.DeleteOne (application => application.Id == id);
-
-        public async Task RemoveAsync (string id) =>
-            await _applications.DeleteOneAsync (application => application.Id == id);
-
-        public string generateJWTToken (string userExternalId) {
-            // // authentication successful so generate jwt token
-            // var tokenHandler = new JwtSecurityTokenHandler();
-            // var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
-            // var tokenDescriptor = new SecurityTokenDescriptor
-            // {
-            //     Subject = new ClaimsIdentity(new Claim[]
-            //     {
-            //         new Claim(ClaimTypes.Name, userExternalId.ToString())
-            //     }),
-            //     Expires = DateTime.UtcNow.AddDays(7),
-            //     SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            // };
-            // var token = tokenHandler.CreateToken(tokenDescriptor);
-            // return tokenHandler.WriteToken(token);
-            return "";
+        public void Update (string id, Application applicationIn) {
+            try {
+                _applications.ReplaceOne (application => application.Id == id, applicationIn);
+            } catch (Exception ex) {
+                _logger.LogError (ex, "Update ApplicationRepository Exception");
+            }
         }
+
+        public async Task UpdateAsync (string id, Application applicationIn) {
+            try {
+                await _applications.ReplaceOneAsync (application => application.Id == id, applicationIn);
+            } catch (Exception ex) {
+                _logger.LogError (ex, "Update ApplicationRepository Exception");
+            }
+        }
+
+        public void Remove (Application applicationIn) {
+            try {
+                _applications.DeleteOne (application => application.Id == applicationIn.Id);
+            } catch (Exception ex) {
+                _logger.LogError (ex, "Remove ApplicationRepository Exception");
+            }
+        }
+
+        public async Task RemoveAsync (Application applicationIn) {
+            try {
+                await _applications.DeleteOneAsync (application => application.Id == applicationIn.Id);
+            } catch (Exception ex) {
+                _logger.LogError (ex, "Remove ApplicationRepository Exception");
+            }
+        }
+
+        public void Remove (string id) {
+            try {
+                _applications.DeleteOne (application => application.Id == id);
+            } catch (Exception ex) {
+                _logger.LogError (ex, "Remove ApplicationRepository Exception");
+            }
+        }
+
+        public async Task RemoveAsync (string id) {
+            try {
+                await _applications.DeleteOneAsync (application => application.Id == id);
+            } catch (Exception ex) {
+                _logger.LogError (ex, "Remove ApplicationRepository Exception");
+            }
+        }
+
     }
 }

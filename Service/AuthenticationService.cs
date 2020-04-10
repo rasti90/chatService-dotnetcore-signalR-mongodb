@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,27 +10,20 @@ using ChatServer.Model.ViewModels;
 using ChatServer.Repository.Contract;
 using ChatServer.Service.Contract;
 using Microsoft.IdentityModel.Tokens;
-using MongoDB.Bson;
 
 namespace ChatServer.Service {
     public class AuthenticationService : IAuthenticationService {
-        private readonly IUserProfileRepository _userProfileRepository;
         private readonly IApplicationRepository _applicationRepository;
         private readonly IUserRepository _userRepository;
         private readonly IAppSettings _appSettings;
 
-        public AuthenticationService (IUserProfileRepository userProfileRepository,
-            IApplicationRepository applicationRepository,
+        public AuthenticationService (IApplicationRepository applicationRepository,
             IUserRepository userRepository,
             IAppSettings appSettings) {
-            this._userProfileRepository = userProfileRepository;
             this._applicationRepository = applicationRepository;
             this._userRepository = userRepository;
             this._appSettings = appSettings;
         }
-        private List<UserProfile> _users = new List<UserProfile> {
-            new UserProfile { Id = "1", firstName = "Test", lastName = "User", userName = "test", passwordHash = "test".GetHashCode ().ToString () }
-        };
 
         public async Task<string> Authenticate (AuthenticateVM model) {
             var app = await _applicationRepository.GetByAPIKeyAsync (model.APIKey);
@@ -43,13 +35,13 @@ namespace ChatServer.Service {
                         FullName = model.Firstname + " " + model.Lastname,
                             ExternalId = model.UserExternalId,
                             AppId = app.Id,
-                            IsOnline = true,
+                            IsOnline = false,
+                            IsActive=true,
                             Activities = new List<Activity> (),
                             Connections = new List<Connection> ()
                     });
                 } else {
                     user.FullName = model.Firstname + " " + model.Lastname;
-                    user.IsOnline = true;
                     await _userRepository.UpdateAsync (user.Id, user);
                 }
 
@@ -58,33 +50,6 @@ namespace ChatServer.Service {
             }
             return null;
         }
-        // public async Task<UserProfile> Authenticate(string username, string password)
-        // {
-        //     var key = Encoding.ASCII.GetBytes(_appSettings.secret);
-        //     string passwordHash=password.GetCustomHashCode(key);
-        //     var user = await _userProfileRepository.FindAsync(u => u.userName == username && u.passwordHash == passwordHash);
-        //     //var user = _users.Find(u => u.userName == username && u.passwordHash == passwordHash);
-
-        //     // return null if user not found
-        //     if (user == null)
-        //         return null;
-
-        //     // authentication successful so generate jwt token
-        //     var tokenHandler = new JwtSecurityTokenHandler();   
-        //     var tokenDescriptor = new SecurityTokenDescriptor
-        //     {
-        //         Subject = new ClaimsIdentity(new Claim[] 
-        //         {
-        //             new Claim(ClaimTypes.Name, user.Id.ToString())
-        //         }),
-        //         Expires = DateTime.UtcNow.AddDays(7),
-        //         SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-        //     };
-        //     var token = tokenHandler.CreateToken(tokenDescriptor);
-        //     user.token = tokenHandler.WriteToken(token);
-
-        //     return user.WithoutPassword();        
-        // }
 
         private string getToken (AuthenticateVM model, string appId, string userId) {
             var key = Encoding.ASCII.GetBytes (_appSettings.secret);

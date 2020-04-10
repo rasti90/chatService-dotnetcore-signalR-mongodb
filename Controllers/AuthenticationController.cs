@@ -1,13 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using ChatServer.Model;
 using ChatServer.Model.ViewModels;
-using ChatServer.Service;
 using ChatServer.Service.Contract;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ChatServer.Controllers {
@@ -23,7 +17,7 @@ namespace ChatServer.Controllers {
 
         [AllowAnonymous]
         [HttpPost ("authenticate")]
-        public async Task<IActionResult> Authenticate ([FromForm] AuthenticateVM model) {
+        public async Task<IActionResult> AuthenticateUser ([FromForm] AuthenticateVM model) {
             var token = await _athenticationService.Authenticate (model);
 
             if (token == null)

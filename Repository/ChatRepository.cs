@@ -7,7 +7,6 @@ using ChatServer.Model;
 using ChatServer.Repository.Contract;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace ChatServer.Repository {

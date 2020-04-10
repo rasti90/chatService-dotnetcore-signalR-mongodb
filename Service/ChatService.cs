@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,7 +6,6 @@ using ChatServer.Model.Enum;
 using ChatServer.Model.ViewModels;
 using ChatServer.Repository.Contract;
 using ChatServer.Service.Contract;
-using MongoDB.Bson;
 
 namespace ChatServer.Service {
     public partial class ChatService : IChatService {

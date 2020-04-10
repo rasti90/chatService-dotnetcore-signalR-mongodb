@@ -1,17 +1,10 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using ChatServer.Model;
-using ChatServer.Model.ViewModels;
-using ChatServer.Service;
 using ChatServer.Service.Contract;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
-using MongoDB.Bson;
-using MongoDB.Driver;
-using Newtonsoft.Json;
 
 namespace ChatServer.Hub {
     [Authorize]
@@ -86,9 +79,7 @@ namespace ChatServer.Hub {
                 string appId = userClaim.Claims.Where (c => c.Type == "AppId")
                     .Select (x => x.Value).FirstOrDefault ();
 
-                //var userExternalId = Context.User.Claims.FirstOrDefault(c => c.ToString()=="userId").Value;
                 var httpContext = Context.GetHttpContext ();
-                //var APIKey = httpContext.Request.Query["APIKey"].ToString();
                 var access_token = httpContext.Request.Query["access_token"].ToString ();
                 var user = await _hubService.MakeUserOnline (appId, userId, Context.ConnectionId, access_token);
                 if (user == null) {
@@ -99,19 +90,18 @@ namespace ChatServer.Hub {
             }
         }
 
-        // public override async Task OnDisconnectedAsync (Exception exception) {
-        //     // var httpContext = Context.GetHttpContext();
-        //     // var userExternalId = httpContext.Request.Query["userExternalId"].ToString();
-        //     // var APIKey = httpContext.Request.Query["APIKey"].ToString();
-        //     // var app = await _applicationService.GetByAPIKeyAsync(APIKey);
-        //     // var user = await _userService.GetByExternalIdAsync(userExternalId);
-        //     // if (user != null && app != null)
-        //     // {
-        //     //     var connection = user.connections.FirstOrDefault(conn => conn.connectionId == Context.ConnectionId);
-        //     //     var activity = new Activity() { appId = app.Id, activityType = Models.Enums.ActivityType.getOffline, connectionId = Context.ConnectionId, date = DateTime.Now };
-        //     //     await _userService.AddActivityAndManageConnectionToUserAsync(user.Id, activity, connection);
-        //     // }
+        public override async Task OnDisconnectedAsync (Exception exception) {
+            var userClaim = Context.User as ClaimsPrincipal;
+                string userId = userClaim.Claims.Where (c => c.Type == "UserId")
+                    .Select (x => x.Value).FirstOrDefault ();
+                string appId = userClaim.Claims.Where (c => c.Type == "AppId")
+                    .Select (x => x.Value).FirstOrDefault ();
 
-        // }
+            var httpContext = Context.GetHttpContext();
+            var access_token = httpContext.Request.Query["access_token"].ToString ();
+
+            await _hubService.MakeUserOffline (appId, userId, Context.ConnectionId, access_token);
+        }
+
     }
 }

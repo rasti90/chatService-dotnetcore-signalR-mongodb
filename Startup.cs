@@ -82,7 +82,7 @@ namespace ChatServer {
                             // If the request is for our hub...
                             var path = context.HttpContext.Request.Path;
                             if (!string.IsNullOrEmpty (accessToken) &&
-                                (path.StartsWithSegments ("/ChatHub"))) {
+                                (path.StartsWithSegments ("/chatHub"))) {
                                 // Read the token out of the query string
                                 context.Token = accessToken;
                             }
@@ -95,18 +95,17 @@ namespace ChatServer {
             services.AddSingleton<IUserRepository, UserRepository> ();
             services.AddSingleton<IFileRepository, FileRepository> ();
             services.AddSingleton<IChatRepository, ChatRepository> ();
-            services.AddSingleton<IUserProfileRepository, UserProfileRepository> ();
 
             services.AddSingleton<IHubService, HubService> ();
             services.AddSingleton<IAuthenticationService, AuthenticationService> ();
             services.AddSingleton<IChatService, ChatService> ();
             services.AddSingleton<IUserService, UserService> ();
-            services.AddSingleton<IUserProfileService, UserProfileService> ();
+            services.AddSingleton<IApplicationService, ApplicationService>();
 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure (IApplicationBuilder app, IWebHostEnvironment env) {
+        public void Configure (IApplicationBuilder app, IWebHostEnvironment env, IApplicationService applicationService) {
             if (env.IsDevelopment ()) {
                 app.UseDeveloperExceptionPage ();
             }
@@ -114,6 +113,8 @@ namespace ChatServer {
             app.UseForwardedHeaders (new ForwardedHeadersOptions {
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
             });
+
+            applicationService.SeedData();
 
             app.UseDefaultFiles ();
             app.UseStaticFiles ();
@@ -128,7 +129,7 @@ namespace ChatServer {
             app.UseAuthorization ();
 
             app.UseEndpoints (endpoints => {
-                endpoints.MapHub<ChatHub> ("/ChatHub");
+                endpoints.MapHub<ChatHub> ("/chatHub");
                 endpoints.MapControllers ();
             });
         }

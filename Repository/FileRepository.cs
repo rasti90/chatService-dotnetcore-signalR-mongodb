@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using ChatServer.Helper;
 using ChatServer.Model;
 using ChatServer.Repository.Contract;

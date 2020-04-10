@@ -1,11 +1,10 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using ChatServer.Model;
 
 namespace ChatServer.Repository.Contract {
     public interface IApplicationRepository {
+        Task SeedDataAsync();
         List<Application> Get ();
         Task<List<Application>> GetAsync ();
         Application Get (string id);

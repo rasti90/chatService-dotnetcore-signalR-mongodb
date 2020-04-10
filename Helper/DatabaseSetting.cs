@@ -1,6 +1,5 @@
 namespace ChatServer.Helper {
     public class DatabaseSettings : IDatabaseSettings {
-        public string UserProfilesCollectionName { get; set; }
         public string ApplicationsCollectionName { get; set; }
         public string UsersCollectionName { get; set; }
         public string ChatsCollectionName { get; set; }
@@ -10,7 +9,6 @@ namespace ChatServer.Helper {
     }
 
     public interface IDatabaseSettings {
-        string UserProfilesCollectionName { get; set; }
         string ApplicationsCollectionName { get; set; }
         string UsersCollectionName { get; set; }
         string ChatsCollectionName { get; set; }

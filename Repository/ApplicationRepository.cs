@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 using ChatServer.Helper;
 using ChatServer.Model;
@@ -22,6 +20,21 @@ namespace ChatServer.Repository {
             var database = client.GetDatabase (settings.DatabaseName);
 
             _applications = database.GetCollection<Application> (settings.ApplicationsCollectionName);
+        }
+
+        public async Task SeedDataAsync(){
+            try{
+            var applicationsCount= await _applications.CountDocumentsAsync(app => true);
+            if(applicationsCount==0){
+                await _applications.InsertOneAsync(new Application(){
+                    Name="Test Client Application",
+                    APIKey="D369EE97CDC040C99D5E2C1998E44B9F"
+                });
+            }
+            }
+            catch(Exception ex){
+                _logger.LogError (ex, "SeedDataAsync ApplicationRepository Exception");
+            }
         }
 
         public List<Application> Get () {

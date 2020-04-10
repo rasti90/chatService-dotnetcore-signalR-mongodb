@@ -100,6 +100,19 @@ namespace ChatServer.Repository {
             }
         }
 
+        public async Task<Connection> GetUserConnectionAsync (string userId, string connectionId) {
+            try {
+            var user = await _users.Find<User>(user => user.Id == userId).FirstOrDefaultAsync();
+            if(user !=null){
+                return user.Connections.Find(conn => conn.ConnectionId==connectionId);
+            }
+            return null;
+                } catch (Exception ex) {
+                _logger.LogError (ex, "GetUserConnectionAsync UserRepository Exception");
+                return null;
+            }
+        }
+
         public User Create (User user) {
             try {
             _users.InsertOne (user);
@@ -156,7 +169,9 @@ namespace ChatServer.Repository {
                     UpdateDefinition<User> updateQuery = Builders<User>.Update.Push ("Activities", activity);
                     bool isOnline = activity.ActivityType == ChatServer.Model.Enum.ActivityType.getOnline;
                     updateQuery = updateQuery.Set ("IsOnline", isOnline);
-                    updateQuery = (isOnline && connection != null) ? updateQuery.Push ("Connections", connection) : updateQuery.Pull ("Connections", connection);
+                    if(connection!=null){
+                        updateQuery = (isOnline) ? updateQuery.Push ("Connections", connection) : updateQuery.Pull ("Connections", connection);
+                    }
                     await _users.FindOneAndUpdateAsync (Builders<User>.Filter.Eq ("Id", userId), updateQuery);
                 }
             } catch (Exception ex) {

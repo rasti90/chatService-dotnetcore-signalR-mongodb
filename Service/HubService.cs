@@ -14,35 +14,41 @@ namespace ChatServer.Service {
         private readonly IUserRepository _userRepository;
         private readonly IChatRepository _chatRepository;
         private readonly IApplicationRepository _applicationRepository;
-        private readonly IUserProfileService _userProfileService;
 
-        public HubService (IUserRepository userRepository, IChatRepository chatRepository, IApplicationRepository applicationRepository, IUserProfileService userProfileService) {
+        public HubService (IUserRepository userRepository, IChatRepository chatRepository
+            , IApplicationRepository applicationRepository) {
             this._userRepository = userRepository;
             this._chatRepository = chatRepository;
             this._applicationRepository = applicationRepository;
-            this._userProfileService = userProfileService;
         }
 
         public async Task<User> MakeUserOnline (string appId, string userId, string connectionId, string access_token) {
-            var app = await _applicationRepository.GetAsync (appId);
-
-            if (app != null) {
-                var user = await _userRepository.GetAsync (appId, userId);
+            var user = await _userRepository.GetAsync (appId, userId);
+            if (user != null) {
                 var connection = new Connection () { ConnectionId = connectionId, JWTToken = access_token };
                 var activity = new Activity () { ActivityType = Model.Enum.ActivityType.getOnline, ConnectionId = connectionId, Date = DateTime.Now };
                 await _userRepository.AddActivityAndManageConnectionToUserAsync (user.Id, activity, connection);
+                return user;
+            }
+            return null;
+        }
 
+        public async Task<User> MakeUserOffline (string appId, string userId, string connectionId, string access_token) {
+            var user = await _userRepository.GetAsync (appId, userId);
+            if (user != null) {
+                var connection = await _userRepository.GetUserConnectionAsync(userId,connectionId);
+                var activity = new Activity() { ActivityType = Model.Enum.ActivityType.getOffline, ConnectionId = connectionId, Date = DateTime.Now };
+                await _userRepository.AddActivityAndManageConnectionToUserAsync(user.Id, activity, connection);
                 return user;
             }
             return null;
         }
 
         public async Task<User> FindUserInChat (string appId, string chatId, string userId) {
-            var app = await _applicationRepository.GetAsync (appId);
-            if (app != null) {
-                var chat = await _chatRepository.GetAsync (app.Id, chatId);
-                var user = await _userRepository.GetAsync (appId, userId);
-                if (chat != null && user != null) {
+            var user = await _userRepository.GetAsync (appId, userId);
+            if (user != null) {
+                var chat = await _chatRepository.GetAsync (appId, chatId);
+                if (chat != null) {
                     if (chat.ChatMembers.Any (member => member.UserId == user.Id)) {
                         return user;
                     }
@@ -52,15 +58,14 @@ namespace ChatServer.Service {
         }
 
         public async Task<UserChatVM> GetChatHistoryAndDoAppropriateActions (string appId, string chatId, string userId) {
-            var app = await _applicationRepository.GetAsync (appId);
-            if (app != null) {
-                var chat = await _chatRepository.GetAsync (app.Id, chatId);
-                var user = await _userRepository.GetAsync (appId, userId);
-                if (chat != null && user != null) {
+            var user = await _userRepository.GetAsync (appId, userId);
+            if (user != null) {
+                var chat = await _chatRepository.GetAsync (appId, chatId);              
+                if (chat != null) {
                     if (chat.ChatMembers.Any (member => member.UserId == user.Id)) {
-                        var lastChatConversations = await _chatRepository.GetChatConversationsAsync (app.Id, chatId, 0, 100);
+                        var lastChatConversations = await _chatRepository.GetChatConversationsAsync (appId, chatId, 0, 100);
 
-                        var unReadChatconversations = await _chatRepository.GetUnReadChatConversationsAsync (app.Id, chatId, user.Id);
+                        var unReadChatconversations = await _chatRepository.GetUnReadChatConversationsAsync (appId, chatId, user.Id);
                         foreach (var conversation in unReadChatconversations) {
                             await _chatRepository.AddReaderToConversationAsync (chatId, conversation.Id,
                                 new ChatConversationReader () { UserId = user.Id, Date = DateTime.Now });
@@ -80,9 +85,8 @@ namespace ChatServer.Service {
         }
 
         public async Task<ChatConversation> SendMessageToChat (string appId, string chatId, string userId, string message) {
-            var app = await _applicationRepository.GetAsync (appId);
-            if (app != null) {
-                var user = await _userRepository.GetAsync (appId, userId);
+            var user = await _userRepository.GetAsync (appId, userId);
+            if (user != null) {                
                 var chat = await _chatRepository.GetAsync (appId, chatId);
                 if (chat != null) {
                     var chatConversation = new ChatConversation () {

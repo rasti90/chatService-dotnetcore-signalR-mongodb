@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ChatServer.Helper;
@@ -13,12 +10,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
@@ -48,7 +42,7 @@ namespace ChatServer {
             services.AddCors (options => {
                 options.AddPolicy (MyCustomAllowedOrigins,
                     builder => {
-                        builder.WithOrigins ("http://localhost:3000", "http://37.152.179.149:3000")
+                        builder.WithOrigins ("http://localhost:3000")
                             .AllowAnyHeader ()
                             .WithMethods ("GET", "POST")
                             .AllowCredentials ();

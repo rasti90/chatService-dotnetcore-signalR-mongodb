@@ -89,7 +89,7 @@ namespace ChatServer.Controllers {
         }
 
         // POST: api/chats/5d41494f86f61d731f895f36/members
-        [HttpPost("{chatId}/members")]
+        [HttpPost ("{chatId}/members")]
         public async Task<ActionResult<List<ChatMember>>> AddMemberToChat (string chatId, [FromBody] ChatMembersVM model) {
             try {
                 var user = User as ClaimsPrincipal;

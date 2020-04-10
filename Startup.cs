@@ -12,6 +12,7 @@ using ChatServer.Service.Contract;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -20,7 +21,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.AspNetCore.HttpOverrides;
 
 namespace ChatServer {
     public class Startup {
@@ -100,7 +100,7 @@ namespace ChatServer {
             services.AddSingleton<IAuthenticationService, AuthenticationService> ();
             services.AddSingleton<IChatService, ChatService> ();
             services.AddSingleton<IUserService, UserService> ();
-            services.AddSingleton<IApplicationService, ApplicationService>();
+            services.AddSingleton<IApplicationService, ApplicationService> ();
 
         }
 
@@ -114,7 +114,7 @@ namespace ChatServer {
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
             });
 
-            applicationService.SeedData();
+            applicationService.SeedData ();
 
             app.UseDefaultFiles ();
             app.UseStaticFiles ();

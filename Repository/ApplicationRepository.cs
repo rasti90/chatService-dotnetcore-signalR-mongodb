@@ -22,17 +22,16 @@ namespace ChatServer.Repository {
             _applications = database.GetCollection<Application> (settings.ApplicationsCollectionName);
         }
 
-        public async Task SeedDataAsync(){
-            try{
-            var applicationsCount= await _applications.CountDocumentsAsync(app => true);
-            if(applicationsCount==0){
-                await _applications.InsertOneAsync(new Application(){
-                    Name="Test Client Application",
-                    APIKey="D369EE97CDC040C99D5E2C1998E44B9F"
-                });
-            }
-            }
-            catch(Exception ex){
+        public async Task SeedDataAsync () {
+            try {
+                var applicationsCount = await _applications.CountDocumentsAsync (app => true);
+                if (applicationsCount == 0) {
+                    await _applications.InsertOneAsync (new Application () {
+                        Name = "Test Client Application",
+                            APIKey = "D369EE97CDC040C99D5E2C1998E44B9F"
+                    });
+                }
+            } catch (Exception ex) {
                 _logger.LogError (ex, "SeedDataAsync ApplicationRepository Exception");
             }
         }

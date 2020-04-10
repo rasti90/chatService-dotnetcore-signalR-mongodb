@@ -92,12 +92,12 @@ namespace ChatServer.Hub {
 
         public override async Task OnDisconnectedAsync (Exception exception) {
             var userClaim = Context.User as ClaimsPrincipal;
-                string userId = userClaim.Claims.Where (c => c.Type == "UserId")
-                    .Select (x => x.Value).FirstOrDefault ();
-                string appId = userClaim.Claims.Where (c => c.Type == "AppId")
-                    .Select (x => x.Value).FirstOrDefault ();
+            string userId = userClaim.Claims.Where (c => c.Type == "UserId")
+                .Select (x => x.Value).FirstOrDefault ();
+            string appId = userClaim.Claims.Where (c => c.Type == "AppId")
+                .Select (x => x.Value).FirstOrDefault ();
 
-            var httpContext = Context.GetHttpContext();
+            var httpContext = Context.GetHttpContext ();
             var access_token = httpContext.Request.Query["access_token"].ToString ();
 
             await _hubService.MakeUserOffline (appId, userId, Context.ConnectionId, access_token);

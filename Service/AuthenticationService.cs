@@ -36,7 +36,7 @@ namespace ChatServer.Service {
                             ExternalId = model.UserExternalId,
                             AppId = app.Id,
                             IsOnline = false,
-                            IsActive=true,
+                            IsActive = true,
                             Activities = new List<Activity> (),
                             Connections = new List<Connection> ()
                     });

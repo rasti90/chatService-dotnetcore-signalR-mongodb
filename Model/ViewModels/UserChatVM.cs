@@ -1,4 +1,3 @@
-
 namespace ChatServer.Model.ViewModels {
     public class UserChatVM {
         public string UserId { get; set; }

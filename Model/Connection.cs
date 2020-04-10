@@ -1,4 +1,3 @@
-
 namespace ChatServer.Model {
     public class Connection {
         public string ConnectionId { get; set; }

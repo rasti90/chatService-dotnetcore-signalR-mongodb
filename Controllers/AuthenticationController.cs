@@ -14,7 +14,6 @@ namespace ChatServer.Controllers {
             this._athenticationService = authenticationService;
         }
 
-
         [AllowAnonymous]
         [HttpPost ("authenticate")]
         public async Task<IActionResult> AuthenticateUser ([FromForm] AuthenticateVM model) {

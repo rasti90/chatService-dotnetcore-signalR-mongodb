@@ -20,7 +20,7 @@ namespace ChatServer.Service {
         }
 
         public async Task SeedData () {
-            await _applicationRepository.SeedDataAsync();
+            await _applicationRepository.SeedDataAsync ();
         }
 
     }

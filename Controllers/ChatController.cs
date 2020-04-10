@@ -90,11 +90,12 @@ namespace ChatServer.Controllers {
 
         // POST: api/chats/5d41494f86f61d731f895f36/members
         [HttpPost ("{chatId}/members")]
-        public async Task<ActionResult<List<ChatMember>>> AddMemberToChat (string chatId, [FromBody] ChatMembersVM model) {
+        public async Task<ActionResult<List<ChatMember>>> AddMemberToChat (string chatId, [FromBody] List<ChatMember> members) {
             try {
                 var user = User as ClaimsPrincipal;
                 string appId = user.GetClaimValue ("AppId");
-
+                
+                var model=new ChatMembersVM(){ChatId=chatId, ChatMembers=members};
                 var addedMembers = await _chatService.AddMembersToChat (appId, model);
                 return addedMembers;
             } catch {

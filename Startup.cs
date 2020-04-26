@@ -49,7 +49,6 @@ namespace ChatServer {
                     });
             });
 
-            services.AddCors ();
             services.AddControllers ();
             services.AddSignalR ();
 
@@ -102,6 +101,9 @@ namespace ChatServer {
         public void Configure (IApplicationBuilder app, IWebHostEnvironment env, IApplicationService applicationService) {
             if (env.IsDevelopment ()) {
                 app.UseDeveloperExceptionPage ();
+            } else {
+                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                app.UseHsts ();
             }
 
             app.UseForwardedHeaders (new ForwardedHeadersOptions {
@@ -121,6 +123,8 @@ namespace ChatServer {
 
             app.UseAuthentication ();
             app.UseAuthorization ();
+
+            app.UseClaimChecking ();
 
             app.UseEndpoints (endpoints => {
                 endpoints.MapHub<ChatHub> ("/chatHub");

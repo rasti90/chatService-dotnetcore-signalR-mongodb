@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Sentry.Extensibility;
 
 namespace ChatServer {
     public class Program {
@@ -15,6 +16,18 @@ namespace ChatServer {
                     logging.AddConsole ();
                 })
                 .ConfigureWebHostDefaults (webBuilder => {
+                    webBuilder.UseSentry(options =>
+                    {
+                        options.Debug = true;
+                        options.MaxRequestBodySize = RequestSize.Always;
+                        options.Dsn = "Your Sentry Dsn Address";
+                        options.BeforeSend = @event =>
+                        {
+                            // Never report server names
+                            @event.ServerName = null;
+                            return @event;
+                        };
+                    });
                     webBuilder.UseStartup<Startup> ();
                     //.UseUrls ("https://localhost:4000");
                 });

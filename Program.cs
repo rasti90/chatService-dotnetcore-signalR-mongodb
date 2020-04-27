@@ -16,18 +16,18 @@ namespace ChatServer {
                     logging.AddConsole ();
                 })
                 .ConfigureWebHostDefaults (webBuilder => {
-                    webBuilder.UseSentry(options =>
-                    {
-                        options.Debug = true;
-                        options.MaxRequestBodySize = RequestSize.Always;
-                        options.Dsn = "Your Sentry Dsn Address";
-                        options.BeforeSend = @event =>
-                        {
-                            // Never report server names
-                            @event.ServerName = null;
-                            return @event;
-                        };
-                    });
+                    // webBuilder.UseSentry(options =>
+                    // {
+                    //     options.Debug = true;
+                    //     options.MaxRequestBodySize = RequestSize.Always;
+                    //     options.Dsn = "Your Sentry Dsn Address";
+                    //     options.BeforeSend = @event =>
+                    //     {
+                    //         // Never report server names
+                    //         @event.ServerName = null;
+                    //         return @event;
+                    //     };
+                    // });
                     webBuilder.UseStartup<Startup> ();
                     //.UseUrls ("https://localhost:4000");
                 });

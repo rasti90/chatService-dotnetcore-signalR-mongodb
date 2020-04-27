@@ -7,5 +7,9 @@ namespace ChatServer.Helper {
             return input.Claims.Where (c => c.Type == claimName)
                 .Select (x => x.Value).FirstOrDefault ();
         }
+
+        public static bool HasClaim (this ClaimsPrincipal input, string claimName) {
+            return input.HasClaim (claim => claim.Value == claimName);
+        }
     }
 }

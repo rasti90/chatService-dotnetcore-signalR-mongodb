@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using ChatServer.Helper;
 using ChatServer.Service.Contract;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
@@ -20,14 +21,12 @@ namespace ChatServer.Hub {
 
         public async Task AddToChat (string chatId) {
             try {
-                var userClaim = Context.User as ClaimsPrincipal;
-                string userId = userClaim.Claims.Where (c => c.Type == "UserId")
-                    .Select (x => x.Value).FirstOrDefault ();
-                string appId = userClaim.Claims.Where (c => c.Type == "AppId")
-                    .Select (x => x.Value).FirstOrDefault ();
+                var user = Context.User as ClaimsPrincipal;
+                string userId = user.GetClaimValue ("UserId");
+                string appId = user.GetClaimValue ("AppId");
 
-                var user = _hubService.FindUserInChat (appId, chatId, userId);
-                if (user != null) {
+                var userInfo = _hubService.FindUserInChat (appId, chatId, userId);
+                if (userInfo != null) {
                     await Groups.AddToGroupAsync (Context.ConnectionId, chatId);
                 }
             } catch {
@@ -37,11 +36,9 @@ namespace ChatServer.Hub {
 
         public async Task GetChatHistory (string chatId) {
             try {
-                var userClaim = Context.User as ClaimsPrincipal;
-                string userId = userClaim.Claims.Where (c => c.Type == "UserId")
-                    .Select (x => x.Value).FirstOrDefault ();
-                string appId = userClaim.Claims.Where (c => c.Type == "AppId")
-                    .Select (x => x.Value).FirstOrDefault ();
+                var user = Context.User as ClaimsPrincipal;
+                string userId = user.GetClaimValue ("UserId");
+                string appId = user.GetClaimValue ("AppId");
 
                 var userChatInfoWithLastConversationList = await _hubService.GetChatHistoryAndDoAppropriateActions (appId, chatId, userId);
                 if (userChatInfoWithLastConversationList != null) {
@@ -56,11 +53,9 @@ namespace ChatServer.Hub {
 
         public async Task SendMessageToChat (string chatId, string message) {
             try {
-                var userClaim = Context.User as ClaimsPrincipal;
-                string userId = userClaim.Claims.Where (c => c.Type == "UserId")
-                    .Select (x => x.Value).FirstOrDefault ();
-                string appId = userClaim.Claims.Where (c => c.Type == "AppId")
-                    .Select (x => x.Value).FirstOrDefault ();
+                var user = Context.User as ClaimsPrincipal;
+                string userId = user.GetClaimValue ("UserId");
+                string appId = user.GetClaimValue ("AppId");
 
                 var chatConversation = await _hubService.SendMessageToChat (appId, chatId, userId, message);
                 if (chatConversation != null) {
@@ -73,16 +68,14 @@ namespace ChatServer.Hub {
 
         public override async Task OnConnectedAsync () {
             try {
-                var userClaim = Context.User as ClaimsPrincipal;
-                string userId = userClaim.Claims.Where (c => c.Type == "UserId")
-                    .Select (x => x.Value).FirstOrDefault ();
-                string appId = userClaim.Claims.Where (c => c.Type == "AppId")
-                    .Select (x => x.Value).FirstOrDefault ();
+                var user = Context.User as ClaimsPrincipal;
+                string userId = user.GetClaimValue ("UserId");
+                string appId = user.GetClaimValue ("AppId");
 
                 var httpContext = Context.GetHttpContext ();
                 var access_token = httpContext.Request.Query["access_token"].ToString ();
-                var user = await _hubService.MakeUserOnline (appId, userId, Context.ConnectionId, access_token);
-                if (user == null) {
+                var userInfo = await _hubService.MakeUserOnline (appId, userId, Context.ConnectionId, access_token);
+                if (userInfo == null) {
                     Context.Abort ();
                 }
             } catch {
@@ -91,11 +84,9 @@ namespace ChatServer.Hub {
         }
 
         public override async Task OnDisconnectedAsync (Exception exception) {
-            var userClaim = Context.User as ClaimsPrincipal;
-            string userId = userClaim.Claims.Where (c => c.Type == "UserId")
-                .Select (x => x.Value).FirstOrDefault ();
-            string appId = userClaim.Claims.Where (c => c.Type == "AppId")
-                .Select (x => x.Value).FirstOrDefault ();
+            var user = Context.User as ClaimsPrincipal;
+            string userId = user.GetClaimValue ("UserId");
+            string appId = user.GetClaimValue ("AppId");
 
             var httpContext = Context.GetHttpContext ();
             var access_token = httpContext.Request.Query["access_token"].ToString ();

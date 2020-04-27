@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -94,8 +95,8 @@ namespace ChatServer.Controllers {
             try {
                 var user = User as ClaimsPrincipal;
                 string appId = user.GetClaimValue ("AppId");
-                
-                var model=new ChatMembersVM(){ChatId=chatId, ChatMembers=members};
+
+                var model = new ChatMembersVM () { ChatId = chatId, ChatMembers = members };
                 var addedMembers = await _chatService.AddMembersToChat (appId, model);
                 return addedMembers;
             } catch {

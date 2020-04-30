@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using ChatServer.Helper;
@@ -74,8 +73,8 @@ namespace ChatServer.Hub {
 
                 var httpContext = Context.GetHttpContext ();
                 var access_token = httpContext.Request.Query["access_token"].ToString ();
-                var userInfo = await _hubService.MakeUserOnline (appId, userId, Context.ConnectionId, access_token);
-                if (userInfo == null) {
+                var result = await _hubService.MakeUserOnline (appId, userId, Context.ConnectionId, access_token);
+                if (!result) {
                     Context.Abort ();
                 }
             } catch {

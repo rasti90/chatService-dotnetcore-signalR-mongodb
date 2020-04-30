@@ -19,31 +19,28 @@ namespace ChatServer.Service {
             this._chatRepository = chatRepository;
         }
 
-        public async Task<User> MakeUserOnline (string appId, string userId, string connectionId, string access_token) {
-            var user = await _userRepository.GetAsync (appId, userId);
+        public async Task<bool> MakeUserOnline (string appId, string userId, string connectionId, string access_token) {
             var connection = new Connection () { ConnectionId = connectionId, JWTToken = access_token };
             var activity = new Activity () { ActivityType = Model.Enum.ActivityType.getOnline, ConnectionId = connectionId, Date = DateTime.Now };
-            await _userRepository.AddActivityAndManageConnectionToUserAsync (user.Id, activity, connection);
-            return user;
+            var result = await _userRepository.AddActivityAndManageConnectionToUserAsync (userId, activity, connection);
+            return result;
         }
 
-        public async Task<User> MakeUserOffline (string appId, string userId, string connectionId, string access_token) {
-            var user = await _userRepository.GetAsync (appId, userId);
+        public async Task<bool> MakeUserOffline (string appId, string userId, string connectionId, string access_token) {
             var connection = await _userRepository.GetUserConnectionAsync (userId, connectionId);
             var activity = new Activity () { ActivityType = Model.Enum.ActivityType.getOffline, ConnectionId = connectionId, Date = DateTime.Now };
-            await _userRepository.AddActivityAndManageConnectionToUserAsync (user.Id, activity, connection);
-            return user;
+            var result =await _userRepository.AddActivityAndManageConnectionToUserAsync (userId, activity, connection);
+            return result;
         }
 
-        public async Task<User> FindUserInChat (string appId, string chatId, string userId) {
-            var user = await _userRepository.GetAsync (appId, userId);
+        public async Task<bool> FindUserInChat (string appId, string chatId, string userId) {
             var chat = await _chatRepository.GetAsync (appId, chatId);
             if (chat != null) {
-                if (chat.ChatMembers.Any (member => member.UserId == user.Id)) {
-                    return user;
+                if (chat.ChatMembers.Any (member => member.UserId == userId)) {
+                    return true;
                 }
             }
-            return null;
+            return false;
         }
 
         public async Task<UserChatVM> GetChatHistoryAndDoAppropriateActions (string appId, string chatId, string userId) {
@@ -71,7 +68,7 @@ namespace ChatServer.Service {
         }
 
         public async Task<ChatConversation> SendMessageToChat (string appId, string chatId, string userId, string message) {
-            var user = await _userRepository.GetAsync (appId, userId);
+            var user = await _userRepository.GetAsync(appId, userId);
             var chat = await _chatRepository.GetAsync (appId, chatId);
             if (chat != null) {
                 var chatConversation = new ChatConversation () {
@@ -81,8 +78,8 @@ namespace ChatServer.Service {
                 Text = message,
                 ChatConversationReaders = new List<ChatConversationReader> (),
                 User = new User () {
-                Id = user.Id,
-                FullName = user.FullName
+                    Id = user.Id,
+                    FullName = user.FullName
                 }
                 };
 

@@ -148,6 +148,15 @@ namespace ChatServer.Repository {
             }
         }
 
+        public async Task updateFullNameAsync (string userId, string fullName) {
+            try {
+                UpdateDefinition<User> updateQuery = Builders<User>.Update.Set ("FullName", fullName);
+                await _users.FindOneAndUpdateAsync (Builders<User>.Filter.Eq ("Id", userId), updateQuery);
+            } catch (Exception ex) {
+                _logger.LogError (ex, "updateFullNameAsync UserRepository Exception");
+            }
+        }
+
         public void AddActivityAndManageConnectionToUser (string userId, Activity activity, Connection connection) {
             try {
                 if (activity != null) {
@@ -162,7 +171,7 @@ namespace ChatServer.Repository {
             }
         }
 
-        public async Task AddActivityAndManageConnectionToUserAsync (string userId, Activity activity, Connection connection) {
+        public async Task<bool> AddActivityAndManageConnectionToUserAsync (string userId, Activity activity, Connection connection) {
             try {
                 if (activity != null) {
                     UpdateDefinition<User> updateQuery = Builders<User>.Update.Push ("Activities", activity);
@@ -172,10 +181,12 @@ namespace ChatServer.Repository {
                         updateQuery = (isOnline) ? updateQuery.Push ("Connections", connection) : updateQuery.Pull ("Connections", connection);
                     }
                     await _users.FindOneAndUpdateAsync (Builders<User>.Filter.Eq ("Id", userId), updateQuery);
+                    return true;
                 }
             } catch (Exception ex) {
                 _logger.LogError (ex, "AddActivityAndManageConnectionToUserAsync UserRepository Exception");
             }
+            return false;
         }
 
         public void Remove (User userIn) {

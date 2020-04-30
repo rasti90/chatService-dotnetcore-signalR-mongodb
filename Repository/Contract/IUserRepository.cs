@@ -17,8 +17,9 @@ namespace ChatServer.Repository.Contract {
         Task<User> CreateAsync (User user);
         void Update (string id, User userIn);
         Task UpdateAsync (string id, User userIn);
+        Task updateFullNameAsync (string userId, string fullName);
         void AddActivityAndManageConnectionToUser (string userId, Activity activity, Connection connection);
-        Task AddActivityAndManageConnectionToUserAsync (string userId, Activity activity, Connection connection);
+        Task<bool> AddActivityAndManageConnectionToUserAsync (string userId, Activity activity, Connection connection);
         void Remove (User userIn);
         Task RemoveAsync (User userIn);
         void Remove (string id);

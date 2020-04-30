@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Http;
 namespace ChatServer.Middleware {
     public class ClaimsCheckingMiddleware {
         private readonly RequestDelegate _next;
+        public static readonly object HttpContextItemsMiddlewareUserKey = new Object();
+        
         public ClaimsCheckingMiddleware (RequestDelegate next) {
             if (next == null) {
                 throw new ArgumentNullException (nameof (next));
@@ -24,11 +26,12 @@ namespace ChatServer.Middleware {
                 if (app != null) {
                     var userInfo = await userRepository.GetAsync (appId, userId);
                     if (userInfo != null) {
+                        context.Items[HttpContextItemsMiddlewareUserKey]=userInfo;
                         await _next (context);
                     }
                 }
             }
         }
-
+        
     }
 }

@@ -39,6 +39,8 @@ namespace ChatServer {
             services.AddSingleton<IAppSettings> (sp =>
                 sp.GetRequiredService<IOptions<AppSettings>> ().Value);
 
+            services.AddHttpContextAccessor();
+
             services.AddCors (options => {
                 options.AddPolicy (MyCustomAllowedOrigins,
                     builder => {

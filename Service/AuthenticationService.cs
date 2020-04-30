@@ -42,7 +42,7 @@ namespace ChatServer.Service {
                     });
                 } else {
                     user.FullName = model.Firstname + " " + model.Lastname;
-                    await _userRepository.UpdateAsync (user.Id, user);
+                    await _userRepository.updateFullNameAsync (user.Id, user.FullName);
                 }
 
                 var token = getToken (model, app.Id, user.Id);

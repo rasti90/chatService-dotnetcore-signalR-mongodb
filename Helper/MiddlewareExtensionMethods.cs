@@ -1,5 +1,5 @@
-using ChatServer.Middleware;
 using Microsoft.AspNetCore.Builder;
+using ChatServer.Middleware;
 
 namespace ChatServer.Helper {
     public static class MiddlewareExtensionMethods {

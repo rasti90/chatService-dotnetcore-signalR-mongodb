@@ -9,5 +9,6 @@ namespace ChatServer.Service.Contract {
         Task<Chat> CreateChat (string appId, string userId, ChatVM model);
         Task<List<ChatMember>> AddMembersToChat (string appId, ChatMembersVM model);
         Task<List<ChatMember>> GetChatMembers (string appId, string chatId);
+        Task<ConversationFilteredResultVM> GetChatConversations (ChatHistoryFilterModel filter);
     }
 }

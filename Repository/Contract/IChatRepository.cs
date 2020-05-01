@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using ChatServer.Model;
+using ChatServer.Model.ViewModels;
 
 namespace ChatServer.Repository.Contract {
     public interface IChatRepository {
@@ -11,6 +12,7 @@ namespace ChatServer.Repository.Contract {
         Task<List<Chat>> GetByUserIdAsync (string appId, string userId);
         List<ChatConversation> GetChatConversations (string app_Id, string chatId, int pageIndex, int pageSize);
         Task<List<ChatConversation>> GetChatConversationsAsync (string appId, string chatId, int pageIndex, int pageSize);
+        Task<List<ChatConversation>> GetChatConversationsAsync (ChatHistoryFilterModel filter);
         Task<List<ChatConversation>> GetUnReadChatConversationsAsync (string appId, string chatId, string userId);
         Task<List<ChatMember>> GetChatMembersAsync (string appId, string chatId);
         Chat Create (Chat chat);

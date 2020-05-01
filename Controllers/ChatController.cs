@@ -105,5 +105,18 @@ namespace ChatServer.Controllers {
             return NotFound ();
         }
 
+        // GET: api/chats/5d41494f86f61d731f895f36/conversations
+        [HttpGet ("{chatId}/conversations")]
+        public async Task<ActionResult<ConversationFilteredResultVM>> GetChatConversations (string chatId, [FromQuery]ChatHistoryFilterModel model) {
+            try {
+                model.ChatId=chatId;
+                var chatConversations = await _chatService.GetChatConversations (model);
+                return chatConversations;
+            } catch {
+
+            }
+            return NotFound ();
+        }
+
     }
 }

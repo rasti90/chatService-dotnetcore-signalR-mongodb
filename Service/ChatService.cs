@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -6,6 +7,9 @@ using ChatServer.Model.Enum;
 using ChatServer.Model.ViewModels;
 using ChatServer.Repository.Contract;
 using ChatServer.Service.Contract;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.AspNetCore.Routing;
 
 namespace ChatServer.Service {
     public partial class ChatService : IChatService {
@@ -13,12 +17,18 @@ namespace ChatServer.Service {
         private readonly IChatRepository _chatRepository;
 
         private readonly IUserService _userService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly LinkGenerator _linkGenerator;
+        protected HttpContext HttpContext => _httpContextAccessor.HttpContext;
 
         public ChatService (IUserRepository userRepository, IChatRepository chatRepository
-            , IUserService userService) {
+            , IUserService userService, IHttpContextAccessor httpContextAccessor
+            , LinkGenerator linkGenerator) {
             this._userRepository = userRepository;
             this._chatRepository = chatRepository;
             this._userService = userService;
+            this._httpContextAccessor=httpContextAccessor;
+            this._linkGenerator=linkGenerator;
         }
 
         public async Task<List<ChatMember>> AddMembersToChat (string appId, ChatMembersVM model) {         
@@ -63,6 +73,23 @@ namespace ChatServer.Service {
         public async Task<List<ChatMember>> GetChatMembers (string appId, string chatId) {
             var chatMembers = await _chatRepository.GetChatMembersAsync (appId, chatId);
             return chatMembers;
+        }
+
+        public async Task<ConversationFilteredResultVM> GetChatConversations (ChatHistoryFilterModel filter) {
+            var chatConversations = await _chatRepository.GetChatConversationsAsync (filter);
+            ConversationFilteredResultVM result=new ConversationFilteredResultVM(){Result=chatConversations}; 
+            
+            filter.EdgeDateTime=chatConversations.FirstOrDefault()?.Date??DateTime.Now;
+            filter.DirectionType=KeysetFilterModelType.Previous;
+            var previousUrl = _linkGenerator.GetUriByAction(HttpContext,null,null,filter,HttpContext.Request.Scheme);
+            result.PreviousUri=new Uri(previousUrl);
+
+            filter.EdgeDateTime=chatConversations.LastOrDefault()?.Date??DateTime.Now;
+            filter.DirectionType=KeysetFilterModelType.Next;
+            var nextUrl = _linkGenerator.GetUriByAction(HttpContext,null,null,filter,HttpContext.Request.Scheme);
+            result.NextUri=new Uri(nextUrl);
+            
+            return result;
         }
     }
 }

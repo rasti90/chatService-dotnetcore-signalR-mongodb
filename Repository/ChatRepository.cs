@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using ChatServer.Helper;
 using ChatServer.Model;
+using ChatServer.Model.Enum;
+using ChatServer.Model.ViewModels;
 using ChatServer.Repository.Contract;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -128,6 +130,40 @@ namespace ChatServer.Repository {
                     User = ConversationUser.Select (conversationUser => new User () { Id = conversationUser.Id, FullName = conversationUser.FullName }).FirstOrDefault ()
                 };
                 return await Task.FromResult (query.Reverse ().ToList ());
+                //return await Task.FromResult(query.Skip(pageIndex * pageSize).Take(pageSize).ToList());
+            } catch (Exception ex) {
+                _logger.LogError (ex, "GetChatConversationsAsync ChatRepository Exception");
+                return null;
+            }
+        }
+
+        public async Task<List<ChatConversation>> GetChatConversationsAsync (ChatHistoryFilterModel filter) {
+            try {
+                /* TO DO 
+                    optimize the query with aggregation framework*/
+                var chat = await _chats.Find (chat => chat.Id == filter.ChatId).FirstOrDefaultAsync ();
+                if (filter.DirectionType == KeysetFilterModelType.Next)
+                    chat.ChatConversations = chat.ChatConversations
+                    .Where (conversation => conversation.Date.CompareTo (filter.EdgeDateTime) > 0)
+                    .OrderBy (o => o.Date).Take (filter.Limit).ToList ();
+                else
+                    chat.ChatConversations = chat.ChatConversations
+                    .Where (conversation => conversation.Date.CompareTo (filter.EdgeDateTime) < 0)
+                    .OrderByDescending (o => o.Date).Take (filter.Limit).Reverse ().ToList ();
+                var query = from conversation in chat.ChatConversations.AsQueryable ()
+                join user in _users.AsQueryable () on
+                conversation.UserId equals user.Id into ConversationUser
+                select new ChatConversation () {
+                    Id = conversation.Id,
+                    UserId = conversation.UserId,
+                    Text = conversation.Text,
+                    FileId = conversation.FileId,
+                    Date = conversation.Date,
+                    ParentConversationId = conversation.ParentConversationId,
+                    ChatConversationReaders = conversation.ChatConversationReaders,
+                    User = ConversationUser.Select (conversationUser => new User () { Id = conversationUser.Id, FullName = conversationUser.FullName }).FirstOrDefault ()
+                };
+                return await Task.FromResult (query.ToList ());
                 //return await Task.FromResult(query.Skip(pageIndex * pageSize).Take(pageSize).ToList());
             } catch (Exception ex) {
                 _logger.LogError (ex, "GetChatConversationsAsync ChatRepository Exception");

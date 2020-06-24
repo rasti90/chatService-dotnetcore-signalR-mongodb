@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ChatServer.Model.ViewModels {
     public class AuthenticateVM {
+        [Required]
         public string APIKey { get; set; }
 
         [Required]

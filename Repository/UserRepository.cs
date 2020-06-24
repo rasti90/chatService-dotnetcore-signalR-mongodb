@@ -101,7 +101,7 @@ namespace ChatServer.Repository {
 
         public async Task<Connection> GetUserConnectionAsync (string userId, string connectionId) {
             try {
-                var user = await _users.Find<User> (user => user.Id == userId).FirstOrDefaultAsync ();
+                var user = await _users.Find<User> (u => u.Id == userId).FirstOrDefaultAsync ();
                 if (user != null) {
                     return user.Connections.Find (conn => conn.ConnectionId == connectionId);
                 }

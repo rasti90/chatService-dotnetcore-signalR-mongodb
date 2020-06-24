@@ -141,7 +141,7 @@ namespace ChatServer.Repository {
             try {
                 /* TO DO 
                     optimize the query with aggregation framework*/
-                var chat = await _chats.Find (chat => chat.Id == filter.ChatId).FirstOrDefaultAsync ();
+                var chat = await _chats.Find (c => c.Id == filter.ChatId).FirstOrDefaultAsync ();
                 if (filter.DirectionType == KeysetFilterModelType.Next)
                     chat.ChatConversations = chat.ChatConversations
                     .Where (conversation => conversation.Date.CompareTo (filter.EdgeDateTime) > 0)
